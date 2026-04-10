@@ -1,0 +1,24 @@
+[project]
+name = "research-analogy-agent-v1"
+version = "0.2.4"
+description = "Problem-driven research and literature CLI agent with analogy-based retrieval"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "requests>=2.31.0",
+  "pypdf>=4.2.0"
+]
+
+[project.scripts]
+httt = "agent_v1.cli:main"
+research-agent = "agent_v1.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

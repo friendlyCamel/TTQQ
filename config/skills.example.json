@@ -1,0 +1,22 @@
+{
+  "skills": [
+    {
+      "name": "deep_research",
+      "description": "更激进的跨领域检索与联想",
+      "context_prompt": "优先探索跨学科可迁移机制，不局限同领域。",
+      "defaults": {
+        "analogy_specialists": 6,
+        "analogy_rounds": 3
+      }
+    },
+    {
+      "name": "fast_scan",
+      "description": "低成本快速扫描",
+      "context_prompt": "优先低成本、高置信候选，减少重检索。",
+      "defaults": {
+        "analogy_specialists": 3,
+        "analogy_rounds": 1
+      }
+    }
+  ]
+}
