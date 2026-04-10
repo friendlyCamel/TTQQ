@@ -110,11 +110,6 @@ export OPENAI_EMBEDDING_MODEL="text-embedding-v3"
 
 如果没有 `config/llm.json`，CLI 会优先读取这些环境变量。
 
-如果你有历史 CSV，也可以转换：
-
-```bash
-httt init-config --from-csv "your.csv" --to config/llm.json
-```
 
 ### 4. Run
 
@@ -145,7 +140,6 @@ httt run --query "毫米波手势识别换房间后精度大幅下降，想提�
 [judge] Assessing transferability (round 1)
 ```
 
-这部分是为了避免输入后长时间没有可见反馈。
 
 ### 5. Session Commands
 
@@ -178,7 +172,6 @@ workspace/<project>/
 - `workspace/<project>/memory/rag_vectors.db`
 - `workspace/<project>/papers/*.pdf`
 
-这些内容属于本地运行态数据，不建议直接提交到公共仓库。
 
 ### 7. Skills And Souls
 
@@ -212,19 +205,8 @@ souls/
 config/
 ```
 
-## What Is Intentionally Not In This Repo
-
-公开仓库默认不应包含这些内容：
-
-- 私有 API key 或本地 `config/llm.json`
-- 本地 workspace、会话状态、RAG 数据库
-- 运行时下载的 PDF 和记忆日志
-- 带个人信息的 CSV / docx / 临时文件
-
-仓库中的 `.gitignore` 已经按这个方向做了隔离。
 
 ## Notes
 
 - 当前检索依赖 Semantic Scholar API，可用性受网络环境影响。
-- 如果底层模型响应慢，CLI 现在至少会显示执行阶段，而不是静默等待。
 - 这是一个偏工程化的研究助手，不是通用聊天机器人。
