@@ -29,7 +29,7 @@ class ResearchOutputComposer:
             for c in cards
         ]
         system = (
-            "你是科研路线合成器。输出 JSON: {routes:[{route_name,logic,pros,cons,paper_titles}],"
+            "你是科研路线合成器。输出 JSON: {routes:[{route_name,logic,pros,cons,paper_titles,first_step,success_signal}],"
             "stage_recommendation:string[]}"
         )
         user = (
@@ -38,7 +38,7 @@ class ResearchOutputComposer:
             f"cards={json.dumps(mini_cards, ensure_ascii=False)}\n"
             f"judge_concerns={json.dumps(judge_concerns or [], ensure_ascii=False)}\n"
             f"clarification_questions={json.dumps(clarification_questions or [], ensure_ascii=False)}\n"
-            "生成 2-4 条路线，每条包含 pros/cons 字符串数组。"
+            "按 ROI 和落地成本排序，生成 2-4 条路线。每条路线必须给出 pros/cons、可参考论文标题、第一步实验、以及可观察成功信号。"
         )
         data = self.llm.complete_json(system, user)
 
@@ -51,6 +51,8 @@ class ResearchOutputComposer:
                     pros=_to_str_list(row.get("pros")),
                     cons=_to_str_list(row.get("cons")),
                     paper_titles=_to_str_list(row.get("paper_titles")),
+                    first_step=str(row.get("first_step", "")),
+                    success_signal=str(row.get("success_signal", "")),
                 )
             )
         rec = _to_str_list(data.get("stage_recommendation"))

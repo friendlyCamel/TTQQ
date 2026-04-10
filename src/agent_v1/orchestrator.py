@@ -13,7 +13,7 @@ from .modules.parser import ResearchProblemParser
 from .modules.quality_gate import OrchestratorQualityGate
 from .modules.reflection import SelfReflectionEngine
 from .modules.retriever import CrossDomainRetriever
-from .schemas import ResearchCase
+from .schemas import JudgeAudit, ResearchCase
 
 
 class ResearchOrchestrator:
@@ -88,6 +88,27 @@ class ResearchOrchestrator:
             emit("retrieve", f"Retrieving papers (round {r + 1})")
             papers = self.retriever.retrieve(case.retrieval_queries, enrich_pdf=True, progress_callback=progress_callback)
             case.candidate_papers = papers
+
+            if not papers:
+                case.transferability_cards = []
+                case.routes = []
+                case.judge_audit = JudgeAudit(
+                    concerns=[
+                        "No external evidence was retrieved from the current query set.",
+                        "The system should not recommend transfer routes without at least minimal paper evidence.",
+                    ],
+                    clarification_questions=[
+                        "What is the exact deployment constraint that matters most right now?",
+                        "Which baseline or failure mode do you most want to beat first?",
+                    ],
+                    blocked=True,
+                )
+                case.stage_recommendation = [
+                    "Refine the problem statement into one concrete failure metric and one hard deployment constraint.",
+                    "Reduce the search space to 2-3 candidate mechanisms before asking for transfer recommendations again.",
+                    "Retry retrieval after adding domain keywords, baseline names, or observed failure signatures.",
+                ]
+                continue
 
             emit("analogy", f"Refreshing analogy discussion with evidence (round {r + 1})")
             analogy = self.analogy.run(

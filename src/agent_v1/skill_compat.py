@@ -24,8 +24,8 @@ def load_markdown_items(root: str | Path, kind: str) -> list[dict]:
             "source": str(fp),
             "skill_dir": str(fp.parent),
             "defaults": {
-                "analogy_specialists": int(meta.get("analogy_specialists", 0) or 0),
-                "analogy_rounds": int(meta.get("analogy_rounds", 0) or 0),
+                "analogy_specialists": _to_optional_int(meta.get("analogy_specialists")),
+                "analogy_rounds": _to_optional_int(meta.get("analogy_rounds")),
             },
             "script": str(meta.get("script", "")).strip(),
             "runner": str(meta.get("runner", "")).strip(),
@@ -131,3 +131,15 @@ def _dedup_items(items: list[dict]) -> list[dict]:
         if prev is None or score >= prev[0]:
             ranked[name] = (score, it)
     return [v[1] for _, v in sorted(ranked.items(), key=lambda x: x[0])]
+
+
+def _to_optional_int(value: object) -> int | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    try:
+        return int(text)
+    except ValueError:
+        return None

@@ -16,7 +16,7 @@ class ProblemAbstractionEngine:
             f"failure={frame.observed_failure}\n"
             f"constraints={frame.constraints}\n"
             f"guidance={guidance}\n"
-            "给出 4-8 个通用问题结构。"
+            "给出 4-6 个通用问题结构。每条必须是可迁移的机制层表述，不要只是换个近义词。"
         )
         data = self.llm.complete_json(system, user)
         arr = data.get("problem_structures", [])

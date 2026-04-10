@@ -12,12 +12,14 @@ class ResearchProblemParser:
         system = (
             "你是科研问题解析器。输出严格 JSON。"
             "字段: task,current_goal,observed_failure,target_metric,constraints,known_context,uncertainties。"
+            "不要复述原文，要把问题压缩成可检索、可执行的表述。"
         )
         user = (
             f"input_type={input_type}\n"
             f"user_input={user_input}\n"
             f"guidance={guidance}\n"
             "请抽取字段。constraints/known_context/uncertainties 必须是字符串数组。"
+            "如果用户没有给出 target_metric，要写成最关键的优化方向，而不是留空。"
         )
         data = self.llm.complete_json(system, user)
         return ProblemFrame(

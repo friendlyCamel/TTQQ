@@ -136,8 +136,8 @@ def _project_root(args) -> Path:
 
 def _run_once(app, args, query: str, input_type: str, project_context: str, skill: dict | None):
     defaults = (skill or {}).get("defaults", {}) if skill else {}
-    analogy_rounds = int(defaults.get("analogy_rounds", args.analogy_rounds))
-    analogy_specialists = int(defaults.get("analogy_specialists", args.analogy_specialists))
+    analogy_rounds = _pick_int(defaults.get("analogy_rounds"), args.analogy_rounds)
+    analogy_specialists = _pick_int(defaults.get("analogy_specialists"), args.analogy_specialists)
 
     case = app.run(
         user_input=query,
@@ -191,6 +191,16 @@ def _print_case(case) -> None:
     for i, r in enumerate(case.routes, 1):
         print(f"{i}. {r.route_name}")
         print(f"   logic: {r.logic}")
+        if r.first_step:
+            print(f"   first_step: {r.first_step}")
+        if r.success_signal:
+            print(f"   success_signal: {r.success_signal}")
+        if r.pros:
+            print(f"   pros: {', '.join(r.pros)}")
+        if r.cons:
+            print(f"   cons: {', '.join(r.cons)}")
+        if r.paper_titles:
+            print(f"   papers: {', '.join(r.paper_titles[:4])}")
 
     print("\n[Layer3] Transferability")
     for i, c in enumerate(case.transferability_cards[:6], 1):
@@ -210,9 +220,20 @@ def _print_case(case) -> None:
     for i, x in enumerate(case.stage_recommendation, 1):
         print(f"{i}. {x}")
 
+    if case.retrieval_queries:
+        print("\n[Queries]")
+        for i, q in enumerate(case.retrieval_queries[:6], 1):
+            print(f"{i}. {q}")
+
 
 def _print_progress(stage: str, detail: str) -> None:
     print(f"[{stage}] {detail}", flush=True)
+
+
+def _pick_int(candidate: int | None, fallback: int) -> int:
+    if candidate is None or candidate <= 0:
+        return fallback
+    return candidate
 
 
 def _session_loop(app, args, llm: OpenAICompatLLM, project_root: Path) -> None:
@@ -225,7 +246,7 @@ def _session_loop(app, args, llm: OpenAICompatLLM, project_root: Path) -> None:
     if args.skill:
         active_skill = find_by_name(skills, args.skill)
     else:
-        active_skill = find_by_name(skills, "pdf_hub")
+        active_skill = find_by_name(skills, "deep_research")
     if args.soul:
         active_soul = find_by_name(souls, args.soul)
     else:
@@ -425,7 +446,7 @@ def main() -> None:
     if args.skill:
         active_skill = find_by_name(skills, args.skill)
     else:
-        active_skill = find_by_name(skills, "pdf_hub")
+        active_skill = find_by_name(skills, "deep_research")
     if args.soul:
         active_soul = find_by_name(souls, args.soul)
     else:

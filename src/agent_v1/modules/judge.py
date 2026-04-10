@@ -35,14 +35,15 @@ class TransferabilityJudge:
         system = (
             "你是论文迁移性评估器。必须输出JSON: {cards:[{title,why_relevant,"
             "transferable_components,transfer_risks,adaptation_effort,fit_for_current_stage,url}]}。"
-            "字段必须完整。"
+            "字段必须完整。adaptation_effort 只能取 low|medium|high。"
+            "fit_for_current_stage 只能取 now|later|background_reading|not_recommended。"
         )
         user = (
             f"problem={{task:{frame.task},goal:{frame.current_goal},failure:{frame.observed_failure},"
             f"constraints:{frame.constraints},target_metric:{frame.target_metric}}}\n"
             f"project_context={project_context}\n"
             f"papers={json.dumps(compact, ensure_ascii=False)}\n"
-            "给出严格保守评估。"
+            "给出严格保守评估。优先筛出真正能转成实验动作的候选，而不是泛泛相关论文。"
         )
         data = self.llm.complete_json(system, user)
         out: list[TransferabilityCard] = []

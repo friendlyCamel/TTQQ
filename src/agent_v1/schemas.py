@@ -63,6 +63,8 @@ class RouteProposal:
     pros: list[str]
     cons: list[str]
     paper_titles: list[str]
+    first_step: str = ""
+    success_signal: str = ""
 
 
 @dataclass
